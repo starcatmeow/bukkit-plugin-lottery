@@ -1,0 +1,17 @@
+name: Lottery
+version: @version@
+main: top.starcatmeow.lottery.LotteryPlugin
+api-version: 1.13
+depend: [Vault]
+authors: [Dongruixuan]
+description: With this plugin, you can use money for more ways.
+website: https://github.com/starcatmeow/bukkit-plugin-lottery
+commands:
+  lottery:
+    aliases: [lt,lottery]
+    usage: /<command> help
+    description: Lottery
+permissions:
+  lottery.admin:
+    description: Allow Lottery Now
+    default: op
