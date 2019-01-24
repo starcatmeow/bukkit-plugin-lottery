@@ -1,2 +1,11 @@
 language: java
 script: mvn package
+deploy:
+  provider: releases
+  api_key:
+    secure: IJ2aUzxLAZyriIVRFXNmJ9mtmoGjzIOQFKaG9pCFjSSiS+qrKwt7AthC9qVvh+oxcF1okGZ0fcWpK9P138NIcZMsHWwyTpB2yPXFCsZ8xzK509bf2F/uaohg8zm5Nc5xrmY54El11cTapbPajVpXqPY500ZT2TDb+C072IGKzdOEG4M0eLdpYG8YQhzU00oWu1ufkk0tiuc/PYPhIdUbzS9sGPSCnsZLVzIYhZZG5pTfNjGT5BiK3zBdaMdbrhVsZjM0HDY5NcNVZ0NbrACFX3NZ0pKM3BCde4BoC+YLh8nJJaKdpzMy41PTmj2EnszHUydauw6e6cxneue20wCw3Kf6lbzdCgTLIZup/s1IMdz3g8h6bL171kBp67BHu8CxXC/L4jaV0U74wJcjGrimWbhUVj3mimv4YT8NZ5rcwbVz9gfY2p6ah064driB+BM2KF8LWnOjLA1q9Q3acsmBLqNRKYGYa5T2SQ/WdhVb1Qn5UYOp2fdXIuw6c2Ph4w7KwKsrSYk+2HZ2L9+ZL+wRRlLdNPRZ4Vm/WXmhLG7jRm4TT84MbAIqdBbHvvNSPEGip8YCnTRYU0bi1oyBujkq4u5FatgegohsTXcY9Vk+Olb6wnvbRDnBjVNn5IZ80b5wRft9fauCYCBGTMYOoL6XLAE+/0pSKyquPr89K6nN4Bc=
+  file: target/bukkit-plugin-lottery-1.0-release.jar
+  on:
+    repo: starcatmeow/bukkit-plugin-lottery
+  draft: true
+  skip_cleanup: true
