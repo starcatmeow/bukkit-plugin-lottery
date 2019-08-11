@@ -46,12 +46,16 @@ class Lottery(private val lotteryLogic: LotteryLogic, private val plugin: JavaPl
                 sender.sendMessage("§l§5彩票系统 §l§7> §4你没有权限执行该命令！")
                 return true
             }
-            plugin.server.scheduler.cancelTasks(plugin)
-            Thread { lotteryLogic.showLotteryResult() }.start()
-            plugin.server.scheduler.runTaskTimerAsynchronously(plugin, Runnable { lotteryLogic.showLotteryResult() }, (LotteryConfig.roundsecond + 23) * 20, (LotteryConfig.roundsecond + 23) * 20)
+            showResult()
         } else
             showHelp(sender)
         return true
+    }
+
+    fun showResult(){
+        plugin.server.scheduler.cancelTasks(plugin)
+        Thread { lotteryLogic.showLotteryResult() }.start()
+        plugin.server.scheduler.runTaskTimerAsynchronously(plugin, Runnable { lotteryLogic.showLotteryResult() }, (LotteryConfig.roundsecond + 23) * 20, (LotteryConfig.roundsecond + 23) * 20)
     }
 
     private fun showHelp(sender: CommandSender) {

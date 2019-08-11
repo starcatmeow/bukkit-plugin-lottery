@@ -26,8 +26,8 @@ class LotteryPlugin : JavaPlugin() {
         LotteryConfig.max = config.getInt("max")
         LotteryConfig.roundsecond = config.getLong("roundsecond")
 
-        ll = LotteryLogic(server, config.getInt("lotteryid"), econ!!)
-        this.getCommand("lottery").executor = Lottery(ll!!, this)
+        ll = LotteryLogic(server, config.getInt("lotteryid"), econ!!, this)
+        this.getCommand("lottery")!!.setExecutor(Lottery(ll!!, this))
         logger.info("Lottery Plugin Enabled!")
     }
 
@@ -41,7 +41,7 @@ class LotteryPlugin : JavaPlugin() {
                 backmoneylist[lt.player] = LotteryConfig.price
             }
         }
-        backmoneylist.forEach { player, money -> econ!!.depositPlayer(player, money) }
+        backmoneylist.forEach { (player, money) -> econ!!.depositPlayer(player, money) }
         config.set("lotteryid", ll!!.id)
         saveConfig()
         logger.info("Lottery Plugin Disabled!")

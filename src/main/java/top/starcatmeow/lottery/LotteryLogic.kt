@@ -5,10 +5,12 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import top.starcatmeow.lottery.commands.Lottery
 
 import java.util.*
+import kotlin.math.abs
 
-class LotteryLogic(private val server: Server, internal var id: Int, private val econ: Economy) {
+class LotteryLogic(private val server: Server, internal var id: Int, private val econ: Economy, private val context: LotteryPlugin) {
     internal val tickets: ArrayList<LotteryTicket> = ArrayList()
     private val firstprize: HashMap<OfflinePlayer, Int> = HashMap()
     private val secondprize: HashMap<OfflinePlayer, Int> = HashMap()
@@ -28,7 +30,7 @@ class LotteryLogic(private val server: Server, internal var id: Int, private val
         server.broadcastMessage("          §3一等奖（三位数字全部匹配）：§4§l$${LotteryConfig.firstprize}/注")
         server.broadcastMessage("          §3二等奖（两位数字对应匹配）：§4§l$${LotteryConfig.secondprize}/注")
         server.broadcastMessage("          §3三等奖（一位数字对应匹配）：§4§l$${LotteryConfig.thirdprize}/注")
-        server.broadcastMessage("          §6还在犹豫什么，下注输入：/lottery buy [你要买的三位数]（可以用random代替来机选） [注数]（默认为1注，最大为10注）")
+        server.broadcastMessage("          §6还在犹豫什么，下注输入：/lottery buy [你要买的三位数]（可以用random代替来机选） [注数]（默认为1注，最大为${LotteryConfig.max}注）")
         resulttime.time = Date().time + LotteryConfig.roundsecond * 1000
         canbuy = true
     }
@@ -39,7 +41,7 @@ class LotteryLogic(private val server: Server, internal var id: Int, private val
             target.sendMessage("          §3一等奖（三位数字全部匹配）：§4§l$${LotteryConfig.firstprize}/注")
             target.sendMessage("          §3二等奖（两位数字对应匹配）：§4§l$${LotteryConfig.secondprize}/注")
             target.sendMessage("          §3三等奖（一位数字对应匹配）：§4§l$${LotteryConfig.thirdprize}/注")
-            target.sendMessage("          §6还在犹豫什么，下注输入：/lottery buy [你要买的三位数]（可以用random代替来机选） [注数]（默认为1注，最大为10注）")
+            target.sendMessage("          §6还在犹豫什么，下注输入：/lottery buy [你要买的三位数]（可以用random代替来机选） [注数]（默认为1注，最大为${LotteryConfig.max}注）")
         } else {
             target.sendMessage("§l§5彩票系统 §l§7> §4现在还没有彩票开售哦！")
         }
@@ -66,7 +68,7 @@ class LotteryLogic(private val server: Server, internal var id: Int, private val
         sleep(3000)
 
         //开奖
-        val result = Math.abs(Random().nextInt() % 1000)
+        val result = abs(Random().nextInt() % 1000)
         server.broadcastMessage("§l§5彩票系统 §l§7> §b第 §7$id§b 期彩票的开奖号码是：" + String.format("%03d", result))
         sleep(3000)
 
@@ -103,38 +105,38 @@ class LotteryLogic(private val server: Server, internal var id: Int, private val
 
         //广播中奖信息
         server.broadcastMessage("          一等奖中奖 $firstprizecount 张：")
-        firstprize.forEach { player, count -> server.broadcastMessage("              ${player.name}：$count 张") }
+        firstprize.forEach { (player, count) -> server.broadcastMessage("              ${player.name}：$count 张") }
         sleep(3000)
 
         server.broadcastMessage("          二等奖中奖 $secondprizecount 张：")
-        secondprize.forEach { player, count -> server.broadcastMessage("              ${player.name}：$count 张") }
+        secondprize.forEach { (player, count) -> server.broadcastMessage("              ${player.name}：$count 张") }
         sleep(3000)
 
         server.broadcastMessage("          三等奖中奖 $thirdprizecount 张：")
-        thirdprize.forEach { player, count -> server.broadcastMessage("              ${player.name}：$count 张") }
+        thirdprize.forEach { (player, count) -> server.broadcastMessage("              ${player.name}：$count 张") }
         sleep(3000)
 
         //发奖
-        firstprize.forEach { player, count ->
+        firstprize.forEach { (player, count) ->
             run {
                 if (player.isOnline)
-                    player.player.sendMessage("§l§5彩票系统 §l§7> §b你有 $count 张彩票获得一等奖，奖金共计 §4§l$${count * LotteryConfig.firstprize}")
+                    player.player?.sendMessage("§l§5彩票系统 §l§7> §b你有 $count 张彩票获得一等奖，奖金共计 §4§l$${count * LotteryConfig.firstprize}")
                 econ.depositPlayer(player, count * LotteryConfig.firstprize)
             }
         }
 
-        secondprize.forEach { player, count ->
+        secondprize.forEach { (player, count) ->
             run {
                 if (player.isOnline)
-                    player.player.sendMessage("§l§5彩票系统 §l§7> §b你有 $count 张彩票获得二等奖，奖金共计 §4§l$${count * LotteryConfig.secondprize}")
+                    player.player?.sendMessage("§l§5彩票系统 §l§7> §b你有 $count 张彩票获得二等奖，奖金共计 §4§l$${count * LotteryConfig.secondprize}")
                 econ.depositPlayer(player, count * LotteryConfig.secondprize)
             }
         }
 
-        thirdprize.forEach { player, count ->
+        thirdprize.forEach { (player, count) ->
             run {
                 if (player.isOnline)
-                    player.player.sendMessage("§l§5彩票系统 §l§7> §b你有 $count 张彩票获得三等奖，奖金共计 §4§l$${count * LotteryConfig.thirdprize}")
+                    player.player?.sendMessage("§l§5彩票系统 §l§7> §b你有 $count 张彩票获得三等奖，奖金共计 §4§l$${count * LotteryConfig.thirdprize}")
                 econ.depositPlayer(player, count * LotteryConfig.thirdprize)
             }
         }
@@ -197,24 +199,28 @@ class LotteryLogic(private val server: Server, internal var id: Int, private val
             econ.withdrawPlayer(player, LotteryConfig.price * amount)
             if (amount > 20) {
                 for (i in 0 until 20) {
-                    lt = LotteryTicket(player, Math.abs(Random().nextInt() % 1000))
+                    lt = LotteryTicket(player, abs(Random().nextInt() % 1000))
                     tickets.add(lt)
                     finalstr.append("            §b彩票号码 ${lt.number}\n")
                 }
                 for (i in 20 until amount) {
-                    lt = LotteryTicket(player, Math.abs(Random().nextInt() % 1000))
+                    lt = LotteryTicket(player, abs(Random().nextInt() % 1000))
                     tickets.add(lt)
                     //finalstr.append("            §b彩票号码 ${lt.number}\n")
                 }
             } else {
                 for (i in 0 until amount) {
-                    lt = LotteryTicket(player, Math.abs(Random().nextInt() % 1000))
+                    lt = LotteryTicket(player, abs(Random().nextInt() % 1000))
                     tickets.add(lt)
                     finalstr.append("            §b彩票号码 ${lt.number}\n")
                 }
             }
             player.sendMessage(finalstr.toString())
             player.sendMessage("          §b共计 $amount 张，购买成功！")
+            if (leftticket == 0){
+                val executor = context.getCommand("lottery")!!.executor as Lottery
+                executor.showResult()
+            }
         } else {
             try {
                 val num = Integer.valueOf(number)
@@ -228,6 +234,10 @@ class LotteryLogic(private val server: Server, internal var id: Int, private val
                 }
                 player.sendMessage("          §b彩票号码 $num * $amount")
                 player.sendMessage("          §b共计 $amount 张，购买成功！")
+                if (leftticket == 0){
+                    val executor = context.getCommand("lottery")!!.executor as Lottery
+                    executor.showResult()
+                }
             } catch (e: Exception) {
                 player.sendMessage("§l§5彩票系统 §l§7> §4命令格式不正确！彩票号码不在正确范围中！")
                 lock2 = false
